@@ -27,7 +27,7 @@ class DbHelper{
     String path = dir.path + "todos.db";
     // var dbTodos = await openDatabase(path, version: 1, onCreate: _createDb);
     // return dbTodos;
-    return openDatabase(path, version: 1, onCreate: _createDb);
+    return openDatabase(path, version: 2, onCreate: _createDb);
   }
 
   void _createDb(Database db, int newVersion) async {
@@ -36,7 +36,7 @@ class DbHelper{
         $colId INTEGER PRIMARY KEY, 
         $colTitle TEXT,
         $colDescription TEXT,
-        $colPriority TEXT,
+        $colPriority INTEGER,
         $colDate TEXT
         )'''
       //"CREATE TABLE $tblTodo($colId INTEGER PRIMARY KEY, $colTitle TEXT,$colDescription TEXT,$colPriority TEXT,$colDate TEXT)"
