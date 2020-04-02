@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_navigation_sqlite/model/todo.dart';
+import 'package:flutter_navigation_sqlite/screens/todo_detail.dart';
 import 'package:flutter_navigation_sqlite/util/dbhelper.dart';
 
 class TodoList extends StatefulWidget {
@@ -22,7 +23,7 @@ class TodoListState extends State<TodoList> {
     return Scaffold(
       body: todoListItems(),
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: () => navigateToDetail(Todo('', 3, '')),
         tooltip: "Add todo",
         child: new Icon(Icons.add),
       ),
@@ -38,13 +39,14 @@ class TodoListState extends State<TodoList> {
           elevation: 2.0,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.red,
+              backgroundColor: getColor(this._todoList[index].priority),
               child: Text(this._todoList[index].id.toString()),
             ),
             title: Text(this._todoList[index].title.toString()),
             subtitle: Text(this._todoList[index].date.toString()),
             onTap: () {
               debugPrint(this._todoList[index].id.toString());
+              navigateToDetail(this._todoList[index]);
             },
           ),
         );
@@ -53,38 +55,17 @@ class TodoListState extends State<TodoList> {
   }
 
   void getData() async {
-    // final dbFuture = _helper.initializeDb();
-    // dbFuture.then((result) {
-    //   final todosFuture = _helper.getTodos();
-    //   todosFuture.then((result) {
-    //     List<Todo> todoList = new List<Todo>();
-    //     _count = result.length;
-
-    //     //for (final obj in result) {
-    //     for (int i = 0; i < _count; i++){
-    //       var aux = Todo.fromObject(result[i]);
-    //       todoList.add(aux);
-    //       debugPrint(result[i].title);
-    //     }
-    //     setState(() {
-    //       this._todoList = todoList;
-    //       this._count = _count;
-    //     });
-    //     debugPrint("Items: " + _count.toString());
-    //   });
-    // });
-    final db = await _helper.initializeDb();
+    await _helper.initializeDb();
 
     var todos = await _helper.getTodos();
     List<Todo> todoList = new List<Todo>();
     _count = todos.length;
 
-    if(_count <= 0){
+    if (_count <= 0) {
       _seedData();
     }
 
-
-    for(int i = 0; i < _count; i++){
+    for (int i = 0; i < _count; i++) {
       var aux = Todo.fromObject(todos[i]);
       todoList.add(aux);
       debugPrint(aux.title);
@@ -95,16 +76,38 @@ class TodoListState extends State<TodoList> {
     });
   }
 
-  void _seedData() async{
-      var now= new DateTime.now();
+  Color getColor(int priority) {
+    switch (priority) {
+      case 1:
+        return Colors.red;
+        break;
+      case 2:
+        return Colors.orange;
+        break;
+      case 3:
+        return Colors.green;
+        break;
+      default:
+        return Colors.green;
+        break;
+    }
+  }
+
+  void _seedData() async {
+    var now = new DateTime.now();
     List<Todo> toInserList = <Todo>[
-      new Todo("Apple",0, now.toString(), "Check all are goods"),
-      new Todo("Orange",1, now.toString(), "Check all are goods"),
+      new Todo("Apple", 0, now.toString(), "Check all are goods"),
+      new Todo("Orange", 1, now.toString(), "Check all are goods"),
     ];
 
-    for(final todo in toInserList){
+    for (final todo in toInserList) {
       var index = await _helper.insert(todo);
       //debugPrint("Inserted " + todo.title);
     }
+  }
+
+  void navigateToDetail(Todo todo) async {
+    bool result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodoDetail(todo)));
   }
 }
