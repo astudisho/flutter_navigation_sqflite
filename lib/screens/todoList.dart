@@ -23,7 +23,7 @@ class TodoListState extends State<TodoList> {
     return Scaffold(
       body: todoListItems(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => navigateToDetail(Todo('', 3, '')),
+        onPressed: () => navigateToDetail(Todo("",3,"")),
         tooltip: "Add todo",
         child: new Icon(Icons.add),
       ),
@@ -96,8 +96,8 @@ class TodoListState extends State<TodoList> {
   void _seedData() async {
     var now = new DateTime.now();
     List<Todo> toInserList = <Todo>[
-      new Todo("Apple", 0, now.toString(), "Check all are goods"),
-      new Todo("Orange", 1, now.toString(), "Check all are goods"),
+      new Todo("Apple", 1, now.toString(), "Check all are goods"),
+      new Todo("Orange", 2, now.toString(), "Check all are goods"),
     ];
 
     for (final todo in toInserList) {

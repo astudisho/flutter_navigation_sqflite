@@ -17,7 +17,7 @@ class Todo {
   int get priority => _priority;
 
   set title(String value) {
-    if (value.length <= 255) _description = value;
+    if (value.length <= 255) _title = value;
   }
 
   set description(String value) {

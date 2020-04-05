@@ -28,22 +28,22 @@ class TodoDetail extends StatefulWidget {
 }
 
 class _TodoDetailState extends State<TodoDetail> {
-  _TodoDetailState(this.todo);
-  Todo todo;
+  _TodoDetailState(this._todo);
+  Todo _todo;
   final _priorities = ["Alta", "Media", "Baja"];
   String _priority = "Baja";
-  TextEditingController titleController = new TextEditingController();
-  TextEditingController descriptionController = new TextEditingController();
+  final TextEditingController titleController = new TextEditingController();
+  final TextEditingController descriptionController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    titleController.text = todo.title;
-    descriptionController.text = todo.description;
+    titleController.text = _todo.title;
+    descriptionController.text = _todo.description;
     TextStyle textStyle = Theme.of(context).textTheme.headline6;
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Text(todo.title),
+          title: Text(_todo.title),
           actions: <Widget>[
             PopupMenuButton<String>(
               onSelected: select,
@@ -97,7 +97,7 @@ class _TodoDetailState extends State<TodoDetail> {
                         child: Text(value),
                       );
                     }).toList(),
-                    value: retrievePriority(todo.priority),
+                    value: retrievePriority(_todo.priority),
                     style: textStyle,
                     onChanged: (String value) {
                       updatePriority(value);
@@ -107,7 +107,13 @@ class _TodoDetailState extends State<TodoDetail> {
               ),
             ],
           ),
-        ));
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: new Icon(Icons.save),
+          onPressed: () => save(),
+        ),
+    );
+    
   }
 
   void select(String seleccion) async {
@@ -117,8 +123,8 @@ class _TodoDetailState extends State<TodoDetail> {
         break;
       case menuDelete:
         Navigator.pop(context, true);
-        if (todo.id != null) {
-          var result = await dbHelper.delete(todo.id);
+        if (_todo.id != null) {
+          var result = await dbHelper.delete(_todo.id);
           if (result != 0) {
             AlertDialog alert = new AlertDialog(
               title: Text("Eliminado"),
@@ -136,12 +142,12 @@ class _TodoDetailState extends State<TodoDetail> {
   }
 
   void save() {
-    todo.date = new DateFormat.yMd().format(DateTime.now());
+    _todo.date = new DateFormat.yMd().format(DateTime.now());
     //Save edit
-    if (todo.id != null) {
-      dbHelper.update(todo);
+    if (_todo.id != null) {
+      dbHelper.update(_todo);
     } else {
-      dbHelper.insert(todo);
+      dbHelper.insert(_todo);
     }
     Navigator.pop(context, true);
   }
@@ -149,16 +155,16 @@ class _TodoDetailState extends State<TodoDetail> {
   void updatePriority(String value) {
     switch (value) {
       case "Alta":
-        todo.priority = 1;
+        _todo.priority = 1;
         break;
       case "Media":
-        todo.priority = 2;
+        _todo.priority = 2;
         break;
       case "Baja":
-        todo.priority = 3;
+        _todo.priority = 3;
         break;
       default:
-        todo.priority = 3;
+        _todo.priority = 3;
     }
 
     setState(() {
@@ -177,14 +183,10 @@ class _TodoDetailState extends State<TodoDetail> {
   }
 
   void updateTitle(String value){
-    todo.title = titleController.text;
-    setState(() {
-      todo.title = titleController.text;
-    });
+    _todo.title = titleController.text;
   }
 
   void updateDescription(String value){
-    todo.description = descriptionController.text;
+    _todo.description = descriptionController.text;
   }
-
 }
